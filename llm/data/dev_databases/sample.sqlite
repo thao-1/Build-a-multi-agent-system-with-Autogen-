@@ -1,0 +1,28 @@
+-- Sample SQLite database schema
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE posts (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER,
+    title TEXT NOT NULL,
+    content TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Sample data
+INSERT INTO users (name, email) VALUES
+    ('John Doe', 'john@example.com'),
+    ('Jane Smith', 'jane@example.com'),
+    ('Bob Wilson', 'bob@example.com');
+
+INSERT INTO posts (user_id, title, content) VALUES
+    (1, 'First Post', 'Hello World!'),
+    (1, 'Second Post', 'This is my second post.'),
+    (2, 'Jane''s Post', 'Jane is writing here.'),
+    (3, 'Bob''s Thoughts', 'Bob has some thoughts to share.'); 
