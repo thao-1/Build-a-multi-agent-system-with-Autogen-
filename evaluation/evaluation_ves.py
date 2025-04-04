@@ -1,16 +1,23 @@
 import sys
 import json
+import os
+import sqlite3
 import numpy as np
 import argparse
 import multiprocessing as mp
 from func_timeout import func_timeout, FunctionTimedOut
-from evaluation_utils import (
+from evaluation.evaluation_utils import (
+    load_json,
     load_jsonl,
     execute_sql,
     package_sqls,
-    sort_results,
-    print_data,
     connect_db,
+    print_data,
+    normalize_sql,
+    get_execution_result,
+    compare_execution_results,
+    compute_ves_score,
+    sort_results,
 )
 import time
 import math

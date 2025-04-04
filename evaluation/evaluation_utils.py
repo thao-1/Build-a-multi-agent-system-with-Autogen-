@@ -2,6 +2,7 @@ import json
 import psycopg2
 import pymysql
 import sqlite3
+import re
 
 def load_jsonl(file_path):
     data = []
@@ -15,6 +16,102 @@ def load_json(dir):
         contents = json.loads(j.read())
     return contents
 
+def load_sql_file(file_path):
+    with open(file_path, 'r') as f:
+        return f.read().strip()
+
+def normalize_sql(sql):
+    # Remove comments
+    sql = re.sub(r'--.*$', '', sql, flags=re.MULTILINE)
+    sql = re.sub(r'/\*.*?\*/', '', sql, flags=re.DOTALL)
+    
+    # Convert to lowercase
+    sql = sql.lower()
+    
+    # Remove extra whitespace
+    sql = ' '.join(sql.split())
+    
+    return sql
+
+def get_execution_result(sql, db_path):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    try:
+        cursor.execute(sql)
+        result = cursor.fetchall()
+    except Exception as e:
+        result = str(e)
+    finally:
+        conn.close()
+    return result
+
+def compare_execution_results(pred_result, gold_result):
+    if isinstance(pred_result, str) or isinstance(gold_result, str):
+        return False
+    
+    # Convert tuples to lists for comparison
+    pred_result = [list(row) for row in pred_result]
+    gold_result = [list(row) for row in gold_result]
+    
+    # Sort both results for consistent comparison
+    pred_result.sort()
+    gold_result.sort()
+    
+    return pred_result == gold_result
+
+def compute_ves_score(pred_result, gold_result, execution_time):
+    """Compute the Reward-based Valid Efficiency Score (R-VES)"""
+    # Check if execution was successful
+    if isinstance(pred_result, str) or isinstance(gold_result, str):
+        return 0.0
+    
+    # Convert results to sorted lists
+    pred_result = sorted([list(row) for row in pred_result])
+    gold_result = sorted([list(row) for row in gold_result])
+    
+    # Check correctness
+    if pred_result != gold_result:
+        return 0.0
+    
+    # Calculate efficiency score based on execution time
+    max_time = 30.0  # Maximum allowed execution time in seconds
+    if execution_time >= max_time:
+        return 0.0
+    
+    efficiency_score = 1.0 - (execution_time / max_time)
+    return efficiency_score
+
+def tokenize_sql(sql):
+    """Tokenize SQL query for F1 score calculation"""
+    # Remove comments and normalize whitespace
+    sql = normalize_sql(sql)
+    
+    # Split on special characters while keeping them
+    tokens = re.findall(r'[\w.]+|[^\s\w]', sql)
+    
+    # Filter out empty tokens and normalize
+    tokens = [token.lower() for token in tokens if token.strip()]
+    
+    return tokens
+
+def compute_f1_score(pred_tokens, gold_tokens):
+    """Compute F1 score between predicted and gold token sets"""
+    pred_set = set(pred_tokens)
+    gold_set = set(gold_tokens)
+    
+    # Calculate intersection
+    common = pred_set.intersection(gold_set)
+    
+    # Calculate precision and recall
+    precision = len(common) / len(pred_set) if pred_set else 0
+    recall = len(common) / len(gold_set) if gold_set else 0
+    
+    # Calculate F1 score
+    if precision + recall == 0:
+        return 0.0
+    f1 = 2 * (precision * recall) / (precision + recall)
+    
+    return f1
 
 # psycopg2   2.9.9
 def connect_postgresql():

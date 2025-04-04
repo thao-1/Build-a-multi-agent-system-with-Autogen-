@@ -2,12 +2,18 @@ import sys
 import argparse
 import multiprocessing as mp
 from func_timeout import func_timeout, FunctionTimedOut
-from evaluation_utils import (
+from evaluation.evaluation_utils import (
+    load_json,
     load_jsonl,
     execute_sql,
     package_sqls,
-    sort_results,
+    connect_db,
     print_data,
+    load_sql_file,
+    normalize_sql,
+    tokenize_sql,
+    compute_f1_score,
+    sort_results,
 )
 
 
