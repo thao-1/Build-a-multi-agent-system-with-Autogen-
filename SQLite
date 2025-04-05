@@ -38,3 +38,51 @@ R-VES                86.60                86.60                86.60            
 ===========================================================================================
 Finished R-VES evaluation for mini dev set
 
+start calculate EX
+                     simple               moderate             challenging          total               
+count                3                    1                    2                    6                   
+======================================    EX   =====================================
+EX                   100.00               100.00               100.00               100.00              
+===========================================================================================
+Finished EX evaluation for mini dev set
+
+start calculate R-VES
+                     simple               moderate             challenging          total               
+count                3                    1                    2                    6                   
+======================================    R-VES   =====================================
+R-VES                86.60                100.00               100.00               93.30               
+===========================================================================================
+Finished R-VES evaluation for mini dev set
+
+start calculate Soft-F1
+                     simple               moderate             challenging          total               
+count                3                    1                    2                    6                   
+======================================    Soft-F1   =====================================
+Soft-F1              100.00               100.00               100.00               100.00              
+===========================================================================================
+Finished Soft-F1 evaluation for mini dev set
+
+start calculate EX
+                     simple               moderate             challenging          total               
+count                3                    1                    2                    6                   
+======================================    EX   =====================================
+EX                   100.00               100.00               100.00               100.00              
+===========================================================================================
+Finished EX evaluation for mini dev set
+
+start calculate R-VES
+                     simple               moderate             challenging          total               
+count                3                    1                    2                    6                   
+======================================    R-VES   =====================================
+R-VES                91.07                86.60                86.60                88.84               
+===========================================================================================
+Finished R-VES evaluation for mini dev set
+
+start calculate Soft-F1
+                     simple               moderate             challenging          total               
+count                3                    1                    2                    6                   
+======================================    Soft-F1   =====================================
+Soft-F1              100.00               100.00               100.00               100.00              
+===========================================================================================
+Finished Soft-F1 evaluation for mini dev set
+
