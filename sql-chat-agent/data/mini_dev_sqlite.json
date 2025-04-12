@@ -15,6 +15,21 @@
             "question": "Show me all users who have made posts",
             "query": "SELECT DISTINCT u.name FROM users u JOIN posts p ON u.id = p.user_id;",
             "question_id": 3
+        },
+        {
+            "question": "What is the average number of comments per post, grouped by user, showing only users with more than 5 comments?",
+            "query": "SELECT u.name, AVG(comment_count) as avg_comments FROM users u JOIN (SELECT p.user_id, COUNT(c.id) as comment_count FROM posts p LEFT JOIN comments c ON p.id = c.post_id GROUP BY p.id) post_stats ON u.id = post_stats.user_id GROUP BY u.id HAVING COUNT(post_stats.comment_count) > 5;",
+            "question_id": 4
+        },
+        {
+            "question": "Find users who have commented on their own posts, along with the post title and comment content",
+            "query": "SELECT u.name, p.title, c.content FROM users u JOIN posts p ON u.id = p.user_id JOIN comments c ON p.id = c.post_id AND u.id = c.user_id ORDER BY u.name, p.title;",
+            "question_id": 5
+        },
+        {
+            "question": "List the top 3 most active users based on a combined score (posts count * 10 + comments count * 2), who joined in the last 30 days and have at least one post with more than 5 comments",
+            "query": "WITH user_activity AS (SELECT u.id, u.name, COUNT(DISTINCT p.id) as post_count, COUNT(DISTINCT c.id) as comment_count FROM users u LEFT JOIN posts p ON u.id = p.user_id LEFT JOIN comments c ON u.id = c.user_id WHERE u.created_at >= datetime('now', '-30 days') GROUP BY u.id), post_popularity AS (SELECT p.user_id FROM posts p JOIN comments c ON p.id = c.post_id GROUP BY p.id HAVING COUNT(c.id) > 5) SELECT ua.name, (ua.post_count * 10 + ua.comment_count * 2) as activity_score FROM user_activity ua WHERE EXISTS (SELECT 1 FROM post_popularity pp WHERE pp.user_id = ua.id) ORDER BY activity_score DESC LIMIT 3;",
+            "question_id": 6
         }
     ]
 } 
